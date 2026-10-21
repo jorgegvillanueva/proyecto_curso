@@ -18,6 +18,14 @@ Aplicación web de una sola página para gestionar tareas y priorizarlas con el 
 - Corregir: `npm run lint:fix` y `npm run format`.
 - Compilar: `npm run build` (comprueba tipos y genera `dist/`).
 
+## Flujo de trabajo con git (git flow)
+
+- `main` es la rama de producción y `dev` la de integración, y es la rama por defecto en GitHub. Las dos están protegidas: no admiten push directo, force push ni borrado, y solo cambian mediante PR.
+- Para trabajar en una issue, crea la rama desde `dev` actualizada: `feature/<número>-<descripcion-corta>` (o `fix/…`). Abre la PR siempre contra `dev` (`gh pr create --base dev`) e incluye `Closes #<número>` en la descripción.
+- Solo se integra en `main` desde `dev`, `release/*` o `hotfix/*`. El check «Validar ramas» (`.github/workflows/git-flow.yml`) rechaza cualquier otra PR contra `main`. Un `hotfix/*` sale de `main` y, tras integrarse, se lleva también a `dev`.
+- Para mergear en `dev`, la PR debe tener todos los hilos de conversación resueltos y estar al día con `dev`, sin conflictos. Si `dev` avanza, actualiza la rama antes de mergear.
+- Ejecuta `npm run check` antes de abrir la PR.
+
 ## Arquitectura
 
 ### Capas

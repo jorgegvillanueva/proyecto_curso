@@ -1,0 +1,33 @@
+# Git flow: el trabajo se integra en dev y solo dev, release/* o hotfix/* llegan a main.
+name: Git flow
+
+on:
+  pull_request:
+    branches: [main, dev]
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  validate-branches:
+    name: Validar ramas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar la rama de origen
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$BASE_REF" != "main" ]; then
+            echo "PR de $HEAD_REF a $BASE_REF permitida."
+            exit 0
+          fi
+          case "$HEAD_REF" in
+            dev | release/* | hotfix/*)
+              echo "PR de $HEAD_REF a main permitida."
+              ;;
+            *)
+              echo "::error::Solo se integra en main desde dev, release/* o hotfix/*. Cambia la rama base de la PR a dev."
+              exit 1
+              ;;
+          esac
